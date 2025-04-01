@@ -3,7 +3,7 @@ import React from 'react';
 import { useMap } from '../context/MapContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Ambulance, Car, Plus, Police, Truck } from 'lucide-react';
+import { Ambulance, Car, Plus, ShieldAlert, Truck } from 'lucide-react';
 import EmergencyVehicleComponent from './EmergencyVehicle';
 import { toast } from 'sonner';
 
@@ -74,7 +74,7 @@ const VehicleSelector: React.FC = () => {
             onClick={() => handleAddVehicle('police')}
             className="flex items-center justify-center hover:bg-emergency/10 border-blue-200 hover:border-emergency"
           >
-            <Police className="h-4 w-4 mr-1" />
+            <ShieldAlert className="h-4 w-4 mr-1" />
             <span>Police</span>
           </Button>
         </div>
