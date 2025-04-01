@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useMap } from '../context/MapContext';
 import { Button } from '@/components/ui/button';
@@ -17,10 +16,12 @@ const VehicleSelector: React.FC = () => {
 
   const handleAddVehicle = (type: 'ambulance' | 'fire' | 'police') => {
     const newVehicleId = addEmergencyVehicle(type);
-    setSelectedVehicle(newVehicleId);
-    toast.success(`Added ${type} vehicle`, {
-      description: 'Select a destination to activate emergency mode.'
-    });
+    if (newVehicleId) {
+      setSelectedVehicle(newVehicleId);
+      toast.success(`Added ${type} vehicle`, {
+        description: 'Select a destination to activate emergency mode.'
+      });
+    }
   };
 
   return (

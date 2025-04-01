@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,12 +8,12 @@ import { useToast } from '@/hooks/use-toast';
 
 // Common locations with coordinates
 const commonLocations = [
-  { name: "Hospital", coordinates: [40.7168, -74.0060] },
-  { name: "Fire Station", coordinates: [40.7130, -74.0090] },
-  { name: "Police HQ", coordinates: [40.7110, -74.0045] },
-  { name: "Central Park", coordinates: [40.7150, -74.0030] },
-  { name: "Downtown", coordinates: [40.7120, -74.0080] },
-  { name: "City Hall", coordinates: [40.7135, -74.0055] },
+  { name: "Hospital", coordinates: [40.7168, -74.0060] as [number, number] },
+  { name: "Fire Station", coordinates: [40.7130, -74.0090] as [number, number] },
+  { name: "Police HQ", coordinates: [40.7110, -74.0045] as [number, number] },
+  { name: "Central Park", coordinates: [40.7150, -74.0030] as [number, number] },
+  { name: "Downtown", coordinates: [40.7120, -74.0080] as [number, number] },
+  { name: "City Hall", coordinates: [40.7135, -74.0055] as [number, number] },
 ];
 
 const DestinationInput: React.FC = () => {
@@ -30,7 +29,6 @@ const DestinationInput: React.FC = () => {
     setSearchInput(value);
     
     if (value.trim().length > 1) {
-      // Filter locations based on search input
       const results = commonLocations.filter(location => 
         location.name.toLowerCase().includes(value.toLowerCase())
       );
@@ -73,7 +71,6 @@ const DestinationInput: React.FC = () => {
       return;
     }
     
-    // Try to find a matching location
     const matchedLocation = commonLocations.find(
       loc => loc.name.toLowerCase() === searchInput.toLowerCase()
     );
