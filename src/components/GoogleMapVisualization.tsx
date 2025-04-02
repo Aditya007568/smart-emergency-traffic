@@ -44,11 +44,28 @@ const GoogleMapVisualization: React.FC<{ apiKey: string }> = ({ apiKey }) => {
   };
 
   const getVehicleIcon = (vehicleType, isSelected) => {
-    const size = isSelected ? 50 : 40;
+    const size = isSelected ? 60 : 40;
+    const selectedBorderColor = '#FF3A33';  // Emergency theme color
+    
+    // Create a custom marker with a border for selected vehicles
+    const markerSize = new google.maps.Size(size, size);
+    const canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d');
+    
+    // Draw border for selected vehicles
+    if (isSelected) {
+      ctx.beginPath();
+      ctx.arc(size/2, size/2, size/2 - 2, 0, 2 * Math.PI);
+      ctx.strokeStyle = selectedBorderColor;
+      ctx.lineWidth = 4;
+      ctx.stroke();
+    }
     
     return {
       url: `/${vehicleType}-icon.png`,
-      scaledSize: new google.maps.Size(size, size),
+      scaledSize: markerSize,
       origin: new google.maps.Point(0, 0),
       anchor: new google.maps.Point(size/2, size/2)
     };

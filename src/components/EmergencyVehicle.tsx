@@ -31,9 +31,9 @@ const EmergencyVehicle: React.FC<EmergencyVehicleProps> = ({
   return (
     <div 
       className={cn(
-        "p-2 border rounded-md cursor-pointer transition-all",
+        "p-2 border rounded-md cursor-pointer transition-all duration-300",
         isSelected 
-          ? "border-emergency bg-emergency/10 shadow-md shadow-emergency/20" 
+          ? "border-emergency bg-emergency/20 shadow-lg shadow-emergency/30" 
           : "border-gray-200 hover:border-emergency/50",
         vehicle.isActive && "animate-pulse-emergency"
       )}
@@ -41,7 +41,7 @@ const EmergencyVehicle: React.FC<EmergencyVehicleProps> = ({
     >
       <div className="flex items-center space-x-2">
         <div className={cn(
-          "p-1 rounded-full",
+          "p-1 rounded-full transition-colors duration-300",
           isSelected
             ? "bg-emergency text-white"
             : vehicle.isActive 
@@ -52,8 +52,8 @@ const EmergencyVehicle: React.FC<EmergencyVehicleProps> = ({
         </div>
         <div>
           <div className={cn(
-            "font-medium capitalize",
-            isSelected && "text-emergency"
+            "font-medium capitalize transition-colors duration-300",
+            isSelected && "text-emergency font-bold"
           )}>
             {vehicle.type}
             {isSelected && " (Selected)"}
