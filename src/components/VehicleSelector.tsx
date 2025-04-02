@@ -10,17 +10,17 @@ const VehicleSelector = () => {
 
   const vehicleTypes = [
     { 
-      type: 'ambulance', 
+      type: 'ambulance' as const, 
       icon: Ambulance, 
       label: 'Ambulance' 
     },
     { 
-      type: 'fire', 
+      type: 'fire' as const, 
       icon: Truck, 
       label: 'Fire Truck' 
     },
     { 
-      type: 'police', 
+      type: 'police' as const, 
       icon: ShieldAlert, 
       label: 'Police' 
     }
@@ -28,7 +28,9 @@ const VehicleSelector = () => {
 
   const handleAddVehicle = (type: 'ambulance' | 'fire' | 'police') => {
     const newVehicleId = addEmergencyVehicle(type);
-    setSelectedVehicle(newVehicleId);
+    if (newVehicleId) {
+      setSelectedVehicle(newVehicleId);
+    }
   };
 
   return (
