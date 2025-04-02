@@ -1,10 +1,10 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { GoogleMap, Marker, Polyline, useLoadScript } from '@react-google-maps/api';
 import { useMap } from '../context/MapContext';
 
 const GoogleMapVisualization: React.FC<{ apiKey: string }> = ({ apiKey }) => {
-  const { isLoaded } = useLoadScript({
+  const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: apiKey,
   });
 
@@ -25,35 +25,43 @@ const GoogleMapVisualization: React.FC<{ apiKey: string }> = ({ apiKey }) => {
     zoomControl: true,
   };
 
-  const trafficSignalIcon: google.maps.Icon = {
-    url: '/traffic-signal-icon.png', // You'll need to add this icon
+  // Handle loading and error states
+  if (loadError) {
+    return <div className="p-4 text-red-500">Error loading maps. Please check your API key.</div>;
+  }
+
+  if (!isLoaded) {
+    return <div className="p-4 flex justify-center items-center h-full">Loading maps...</div>;
+  }
+
+  // Only create these objects after Google Maps API is loaded
+  const trafficSignalIcon = {
+    url: '/traffic-signal-icon.png',
     scaledSize: new google.maps.Size(30, 30),
     origin: new google.maps.Point(0, 0),
     anchor: new google.maps.Point(15, 15)
   };
 
-  const vehicleIcons: { [key: string]: google.maps.Icon } = {
+  const vehicleIcons = {
     ambulance: {
-      url: '/ambulance-icon.png', // You'll need to add this icon
+      url: '/ambulance-icon.png',
       scaledSize: new google.maps.Size(40, 40),
       origin: new google.maps.Point(0, 0),
       anchor: new google.maps.Point(20, 20)
     },
     fire: {
-      url: '/fire-truck-icon.png', // You'll need to add this icon
+      url: '/fire-truck-icon.png',
       scaledSize: new google.maps.Size(40, 40),
       origin: new google.maps.Point(0, 0),
       anchor: new google.maps.Point(20, 20)
     },
     police: {
-      url: '/police-car-icon.png', // You'll need to add this icon
+      url: '/police-car-icon.png',
       scaledSize: new google.maps.Size(40, 40),
       origin: new google.maps.Point(0, 0),
       anchor: new google.maps.Point(20, 20)
     }
   };
-
-  if (!isLoaded) return <div>Loading...</div>;
 
   return (
     <GoogleMap

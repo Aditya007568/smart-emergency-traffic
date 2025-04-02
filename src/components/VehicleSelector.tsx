@@ -28,7 +28,8 @@ const VehicleSelector = () => {
 
   const handleAddVehicle = (type: 'ambulance' | 'fire' | 'police') => {
     const newVehicleId = addEmergencyVehicle(type);
-    if (newVehicleId) {
+    // Instead of checking truthiness directly, check if it's a string
+    if (typeof newVehicleId === 'string') {
       setSelectedVehicle(newVehicleId);
     }
   };
