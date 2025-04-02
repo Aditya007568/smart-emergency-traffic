@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Search, MapPin, Navigation } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
-// Common locations with coordinates
 const commonLocations = [
   { name: "Hospital", coordinates: [40.7168, -74.0060] as [number, number] },
   { name: "Fire Station", coordinates: [40.7130, -74.0090] as [number, number] },
@@ -19,26 +19,28 @@ const commonLocations = [
 const DestinationInput: React.FC = () => {
   const { selectedVehicle, setDestination, getVehicleById } = useMap();
   const [searchInput, setSearchInput] = useState('');
+  const [fromSearchInput, setFromSearchInput] = useState('');
   const [searchResults, setSearchResults] = useState<typeof commonLocations>([]);
+  const [fromSearchResults, setFromSearchResults] = useState<typeof commonLocations>([]);
   const { toast } = useToast();
 
   const selectedVehicleData = selectedVehicle ? getVehicleById(selectedVehicle) : null;
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchInput(value);
+  const handleSearch = (value: string, type: 'to' | 'from') => {
+    const locations = commonLocations.filter(location => 
+      location.name.toLowerCase().includes(value.toLowerCase())
+    );
     
-    if (value.trim().length > 1) {
-      const results = commonLocations.filter(location => 
-        location.name.toLowerCase().includes(value.toLowerCase())
-      );
-      setSearchResults(results);
+    if (type === 'to') {
+      setSearchInput(value);
+      setSearchResults(locations);
     } else {
-      setSearchResults([]);
+      setFromSearchInput(value);
+      setFromSearchResults(locations);
     }
   };
 
-  const handleSelectLocation = (location: typeof commonLocations[0]) => {
+  const handleSelectLocation = (location: typeof commonLocations[0], type: 'to' | 'from') => {
     if (!selectedVehicle) {
       toast({
         title: "No vehicle selected",
@@ -48,13 +50,19 @@ const DestinationInput: React.FC = () => {
       return;
     }
     
-    setDestination(selectedVehicle, location.coordinates);
-    setSearchInput(location.name);
-    setSearchResults([]);
+    if (type === 'to') {
+      setDestination(selectedVehicle, location.coordinates);
+      setSearchInput(location.name);
+      setSearchResults([]);
+    } else {
+      // Placeholder for setting origin - you might want to expand this functionality
+      setFromSearchInput(location.name);
+      setFromSearchResults([]);
+    }
     
     toast({
-      title: "Destination set",
-      description: `Route to ${location.name} has been calculated.`,
+      title: "Location set",
+      description: `${type === 'to' ? 'Destination' : 'Origin'} set to ${location.name}`,
       variant: "default"
     });
   };
@@ -71,12 +79,12 @@ const DestinationInput: React.FC = () => {
       return;
     }
     
-    const matchedLocation = commonLocations.find(
+    const matchedDestination = commonLocations.find(
       loc => loc.name.toLowerCase() === searchInput.toLowerCase()
     );
     
-    if (matchedLocation) {
-      handleSelectLocation(matchedLocation);
+    if (matchedDestination) {
+      handleSelectLocation(matchedDestination, 'to');
     } else {
       toast({
         title: "Location not found",
@@ -91,7 +99,7 @@ const DestinationInput: React.FC = () => {
       <CardHeader className="pb-3">
         <CardTitle className="text-lg flex items-center">
           <MapPin className="w-5 h-5 mr-2 text-emergency" />
-          Set Destination
+          Set Route
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -99,31 +107,63 @@ const DestinationInput: React.FC = () => {
           <>
             <form onSubmit={handleSubmit} className="space-y-3">
               <div className="relative">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                  <Input
-                    type="text"
-                    value={searchInput}
-                    onChange={handleSearch}
-                    placeholder="Search for a location..."
-                    className="pl-9"
-                  />
-                </div>
-                
-                {searchResults.length > 0 && (
-                  <div className="absolute z-10 w-full mt-1 bg-white shadow-lg rounded-md border border-gray-200 max-h-48 overflow-y-auto">
-                    {searchResults.map((location) => (
-                      <div
-                        key={location.name}
-                        className="px-3 py-2 hover:bg-gray-100 cursor-pointer flex items-center"
-                        onClick={() => handleSelectLocation(location)}
-                      >
-                        <MapPin className="h-4 w-4 text-emergency mr-2" />
-                        {location.name}
-                      </div>
-                    ))}
+                <div className="mb-2">
+                  <label className="text-sm text-gray-600 mb-1 block">From</label>
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                    <Input
+                      type="text"
+                      value={fromSearchInput}
+                      onChange={(e) => handleSearch(e.target.value, 'from')}
+                      placeholder="Search origin location..."
+                      className="pl-9"
+                    />
                   </div>
-                )}
+                  
+                  {fromSearchResults.length > 0 && (
+                    <div className="absolute z-10 w-full mt-1 bg-white shadow-lg rounded-md border border-gray-200 max-h-48 overflow-y-auto">
+                      {fromSearchResults.map((location) => (
+                        <div
+                          key={location.name}
+                          className="px-3 py-2 hover:bg-gray-100 cursor-pointer flex items-center"
+                          onClick={() => handleSelectLocation(location, 'from')}
+                        >
+                          <MapPin className="h-4 w-4 text-emergency mr-2" />
+                          {location.name}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <label className="text-sm text-gray-600 mb-1 block">To</label>
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                    <Input
+                      type="text"
+                      value={searchInput}
+                      onChange={(e) => handleSearch(e.target.value, 'to')}
+                      placeholder="Search destination location..."
+                      className="pl-9"
+                    />
+                  </div>
+                  
+                  {searchResults.length > 0 && (
+                    <div className="absolute z-10 w-full mt-1 bg-white shadow-lg rounded-md border border-gray-200 max-h-48 overflow-y-auto">
+                      {searchResults.map((location) => (
+                        <div
+                          key={location.name}
+                          className="px-3 py-2 hover:bg-gray-100 cursor-pointer flex items-center"
+                          onClick={() => handleSelectLocation(location, 'to')}
+                        >
+                          <MapPin className="h-4 w-4 text-emergency mr-2" />
+                          {location.name}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
               
               <Button 
@@ -131,7 +171,7 @@ const DestinationInput: React.FC = () => {
                 className="w-full flex items-center bg-emergency hover:bg-emergency/90 text-white"
               >
                 <Navigation className="w-4 h-4 mr-2" />
-                Set Destination
+                Set Route
               </Button>
             </form>
             
@@ -140,13 +180,13 @@ const DestinationInput: React.FC = () => {
               loc.coordinates[1] === selectedVehicleData.destination?.[1]
             ) ? (
               <div className="mt-4 pt-4 border-t text-sm">
-                <div className="font-medium">Current Destination:</div>
+                <div className="font-medium">Current Route:</div>
                 <div className="text-gray-600 flex items-center">
                   <MapPin className="h-3 w-3 mr-1 text-emergency" />
                   {commonLocations.find(loc => 
                     loc.coordinates[0] === selectedVehicleData.destination?.[0] && 
                     loc.coordinates[1] === selectedVehicleData.destination?.[1]
-                  )?.name || 'Custom location'}
+                  )?.name || 'Custom destination'}
                 </div>
               </div>
             ) : selectedVehicleData?.destination ? (
@@ -161,7 +201,7 @@ const DestinationInput: React.FC = () => {
           </>
         ) : (
           <div className="text-center py-4 text-gray-500">
-            Select a vehicle to set destination
+            Select a vehicle to set route
           </div>
         )}
       </CardContent>
