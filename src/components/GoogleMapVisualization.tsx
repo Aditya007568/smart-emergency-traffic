@@ -15,9 +15,10 @@ const GoogleMapVisualization: React.FC<{ apiKey: string }> = ({ apiKey }) => {
     height: '100%',
   };
 
+  // Updated to Pune, India coordinates
   const defaultCenter = {
-    lat: 40.7128,
-    lng: -74.0060,
+    lat: 18.5204,
+    lng: 73.8567,
   };
 
   const defaultOptions = {

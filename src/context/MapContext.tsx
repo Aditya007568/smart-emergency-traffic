@@ -24,7 +24,7 @@ interface MapContextType {
   emergencyVehicles: EmergencyVehicle[];
   selectedVehicle: string | null;
   setSelectedVehicle: (id: string | null) => void;
-  addEmergencyVehicle: (type: 'ambulance' | 'fire' | 'police') => void;
+  addEmergencyVehicle: (type: 'ambulance' | 'fire' | 'police') => string;
   setDestination: (vehicleId: string, destination: [number, number]) => void;
   activateEmergencyMode: (vehicleId: string) => void;
   deactivateEmergencyMode: (vehicleId: string) => void;
@@ -34,44 +34,44 @@ interface MapContextType {
   toggleSignalOverride: (id: string) => void;
 }
 
-// Initial sample data
+// Initial sample data for Pune, India
 const initialSignals: TrafficSignal[] = [
   { 
     id: "s1", 
-    name: "Main St & 1st Ave", 
-    location: [40.7128, -74.0060], 
+    name: "Fergusson College Road & JM Road", 
+    location: [18.5204, 73.8467], 
     status: "red", 
     timeRemaining: 30,
     isEmergencyOverride: false,
   },
   { 
     id: "s2", 
-    name: "Main St & 2nd Ave", 
-    location: [40.7138, -74.0050], 
+    name: "Karve Road & Paud Road", 
+    location: [18.5138, 73.8270], 
     status: "green", 
     timeRemaining: 20,
     isEmergencyOverride: false,
   },
   { 
     id: "s3", 
-    name: "Broadway & 34th St", 
-    location: [40.7118, -74.0040], 
+    name: "Laxmi Road & Kumthekar Road", 
+    location: [18.5218, 73.8570], 
     status: "amber", 
     timeRemaining: 5,
     isEmergencyOverride: false,
   },
   { 
     id: "s4", 
-    name: "Park Ave & 42nd St", 
-    location: [40.7148, -74.0030], 
+    name: "University Circle", 
+    location: [18.5248, 73.8630], 
     status: "red", 
     timeRemaining: 25,
     isEmergencyOverride: false,
   },
   { 
     id: "s5", 
-    name: "5th Ave & 23rd St", 
-    location: [40.7158, -74.0020], 
+    name: "Sinhagad Road Junction", 
+    location: [18.5158, 73.8220], 
     status: "amber", 
     timeRemaining: 8,
     isEmergencyOverride: false,
@@ -89,7 +89,7 @@ export const MapProvider = ({ children }: { children: ReactNode }) => {
     const newVehicle: EmergencyVehicle = {
       id: `vehicle-${Date.now()}`,
       type,
-      location: [40.7128, -74.0060], // Default to NYC coords
+      location: [18.5204, 73.8567], // Default to Pune center
       destination: null,
       isActive: false,
       route: [],
