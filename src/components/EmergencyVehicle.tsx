@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Ambulance, Car, Navigation } from 'lucide-react';
+import { Ambulance, Car, Navigation, FireExtinguisher, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { EmergencyVehicle as VehicleType } from '../context/MapContext';
 
@@ -20,9 +20,9 @@ const EmergencyVehicle: React.FC<EmergencyVehicleProps> = ({
       case 'ambulance':
         return <Ambulance size={20} />;
       case 'fire':
-        return <Car size={20} />;
+        return <FireExtinguisher size={20} />;
       case 'police':
-        return <Car size={20} />;
+        return <Shield size={20} />;
       default:
         return <Car size={20} />;
     }
@@ -33,7 +33,7 @@ const EmergencyVehicle: React.FC<EmergencyVehicleProps> = ({
       className={cn(
         "p-2 border rounded-md cursor-pointer transition-all",
         isSelected 
-          ? "border-emergency bg-emergency/10" 
+          ? "border-emergency bg-emergency/10 shadow-md shadow-emergency/20" 
           : "border-gray-200 hover:border-emergency/50",
         vehicle.isActive && "animate-pulse-emergency"
       )}
@@ -42,13 +42,21 @@ const EmergencyVehicle: React.FC<EmergencyVehicleProps> = ({
       <div className="flex items-center space-x-2">
         <div className={cn(
           "p-1 rounded-full",
-          vehicle.isActive ? "bg-emergency text-white" : "bg-gray-100 text-gray-700"
+          isSelected
+            ? "bg-emergency text-white"
+            : vehicle.isActive 
+              ? "bg-emergency text-white" 
+              : "bg-gray-100 text-gray-700"
         )}>
           {getVehicleIcon()}
         </div>
         <div>
-          <div className="font-medium capitalize">
+          <div className={cn(
+            "font-medium capitalize",
+            isSelected && "text-emergency"
+          )}>
             {vehicle.type}
+            {isSelected && " (Selected)"}
           </div>
           <div className="text-xs text-gray-500">
             {vehicle.isActive 

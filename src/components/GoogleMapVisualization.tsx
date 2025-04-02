@@ -8,7 +8,7 @@ const GoogleMapVisualization: React.FC<{ apiKey: string }> = ({ apiKey }) => {
     googleMapsApiKey: apiKey,
   });
 
-  const { emergencyVehicles, signals } = useMap();
+  const { emergencyVehicles, signals, selectedVehicle } = useMap();
 
   const mapContainerStyle = {
     width: '100%',
@@ -43,25 +43,15 @@ const GoogleMapVisualization: React.FC<{ apiKey: string }> = ({ apiKey }) => {
     anchor: new google.maps.Point(15, 15)
   };
 
-  const vehicleIcons = {
-    ambulance: {
-      url: '/ambulance-icon.png',
-      scaledSize: new google.maps.Size(40, 40),
+  const getVehicleIcon = (vehicleType, isSelected) => {
+    const size = isSelected ? 50 : 40;
+    
+    return {
+      url: `/${vehicleType}-icon.png`,
+      scaledSize: new google.maps.Size(size, size),
       origin: new google.maps.Point(0, 0),
-      anchor: new google.maps.Point(20, 20)
-    },
-    fire: {
-      url: '/fire-truck-icon.png',
-      scaledSize: new google.maps.Size(40, 40),
-      origin: new google.maps.Point(0, 0),
-      anchor: new google.maps.Point(20, 20)
-    },
-    police: {
-      url: '/police-car-icon.png',
-      scaledSize: new google.maps.Size(40, 40),
-      origin: new google.maps.Point(0, 0),
-      anchor: new google.maps.Point(20, 20)
-    }
+      anchor: new google.maps.Point(size/2, size/2)
+    };
   };
 
   return (
@@ -82,30 +72,36 @@ const GoogleMapVisualization: React.FC<{ apiKey: string }> = ({ apiKey }) => {
         />
       ))}
 
-      {emergencyVehicles.map((vehicle) => (
-        <React.Fragment key={vehicle.id}>
-          <Marker
-            position={{
-              lat: vehicle.location[0],
-              lng: vehicle.location[1]
-            }}
-            icon={vehicleIcons[vehicle.type]}
-          />
-          {vehicle.route && vehicle.route.length > 1 && (
-            <Polyline
-              path={vehicle.route.map(point => ({
-                lat: point[0],
-                lng: point[1]
-              }))}
-              options={{
-                strokeColor: '#FF0000',
-                strokeOpacity: 0.8,
-                strokeWeight: 3
+      {emergencyVehicles.map((vehicle) => {
+        const isSelected = vehicle.id === selectedVehicle;
+        
+        return (
+          <React.Fragment key={vehicle.id}>
+            <Marker
+              position={{
+                lat: vehicle.location[0],
+                lng: vehicle.location[1]
               }}
+              icon={getVehicleIcon(vehicle.type, isSelected)}
+              zIndex={isSelected ? 1000 : 100}
+              animation={isSelected ? google.maps.Animation.BOUNCE : null}
             />
-          )}
-        </React.Fragment>
-      ))}
+            {vehicle.route && vehicle.route.length > 1 && (
+              <Polyline
+                path={vehicle.route.map(point => ({
+                  lat: point[0],
+                  lng: point[1]
+                }))}
+                options={{
+                  strokeColor: isSelected ? '#FF3A33' : '#FF0000',
+                  strokeOpacity: isSelected ? 1 : 0.8,
+                  strokeWeight: isSelected ? 5 : 3
+                }}
+              />
+            )}
+          </React.Fragment>
+        );
+      })}
     </GoogleMap>
   );
 };
